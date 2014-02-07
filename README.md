@@ -1,6 +1,6 @@
 arc_spin
 ========
-Class and example for easier arc rotation
+Classes for easier arc rotation
 
 Arc.scd
 MonoM.sc
