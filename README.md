@@ -1,12 +1,6 @@
-arc_spin
+arc spin
 ========
 Classes for easier arc rotation
-
-Arc.scd
-MonoM.sc
-ArcKnobAbsolute.sc
-ArcKnobIncremental.sc
-ArcUsage.scd
 
 MonoM class written by Raja Das
 https://github.com/Karaokaze
