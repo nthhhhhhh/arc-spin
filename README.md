@@ -1,15 +1,16 @@
 arc spin
 ========
-classes for easier arc rotation
+Classes for easier arc rotation
 
-setup:
+Setup:
+
 Drop the .sc (class) files in your supercollider class folder or symlink them.
 
-osx:
+For OSX:
+
 /Applications/SuperCollider/SuperCollider.app/Contents/Resources/SCClassLibrary
 
-leave the .scd out of the class directory.
-you can open it from a project folder or wherever you find appropriate.
+Leave the .scd out of the class directory. You can open it from a project folder or wherever you find appropriate.
 
 See ArcUsage.scd for further setup.
 
