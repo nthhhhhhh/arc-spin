@@ -11,72 +11,87 @@ https://github.com/nthhisst
 
 ArcKnobIncremental{
 
-	var my_arc,
-	<>sensitivity,
-	my_arc_map,
-	my_current_led,
-	my_gathered_delta;
+    var arc;
+    var arc_map;
+    var current_led;
+    var gathered_delta;
 
-	*new{ | arc, sensitivity_level |
+    var <>sensitivity;
 
-		^super.new.initArcKnob(arc, sensitivity_level);
-	}
+    *new{ | your_arc, sensitivity_level |
 
-	initArcKnob { | arc, sensitivity_level |
+        ^super.new.initArcKnob(your_arc, sensitivity_level);
+    }
 
-		my_arc = arc;
-		sensitivity = sensitivity_level;
+    initArcKnob { | your_arc, sensitivity_level |
 
-		my_arc_map = Array.fill(64, 0);
+        arc = your_arc;
 
-		my_arc_map[0] = 15;
+        sensitivity = Array.fill(4, sensitivity_level);
+        current_led = Array.fill(4, 0);
+        gathered_delta = Array.fill(4, 0);
 
-		my_current_led = 0;
-		my_gathered_delta = 0;
+        arc_map = [
+            Array.fill(64,0),
+            Array.fill(64, 0),
+            Array.fill(64, 0),
+            Array.fill(64, 0)
+        ];
 
-	}
 
-	spin { | knob_n, delta |
+        for(0, 3, { arg i; arc_map[i][0] = 15; });
 
-		if(delta.isStrictlyPositive)
-		{
-			my_gathered_delta = my_gathered_delta + delta;
+        /* Old code:
+        sensitivity = sensitivity_level;
+        arc_map = Array.fill(64, 0);
+        arc_map[0] = 15;
 
-			while {my_gathered_delta >= sensitivity}
-			{
-				my_arc_map[my_current_led] = 0;
-				my_current_led = my_current_led + 1;
-				my_current_led = my_current_led.wrap(0, 63);
-				my_arc_map[my_current_led] = 15;
-				my_gathered_delta = my_gathered_delta - sensitivity;
-			};
+        current_led = 0;
+        gathered_delta = 0;*/
 
-			my_arc.ringmap(knob_n, my_arc_map);
-		}
+    }
 
-		{ // if it's negative
+    spin { | knob_n, delta |
 
-			my_gathered_delta = my_gathered_delta + delta.abs;
+        if(delta.isStrictlyPositive)
+        {
+            gathered_delta[knob_n] = gathered_delta[knob_n] + delta;
 
-			while {my_gathered_delta >= sensitivity}
-			{
-				my_arc_map[my_current_led] = 0;
-				my_current_led = my_current_led - 1;
-				my_current_led = my_current_led.wrap(0, 63);
-				my_arc_map[my_current_led] = 15;
-				my_gathered_delta = my_gathered_delta - sensitivity;
-			};
+            while { gathered_delta[knob_n] >= sensitivity[knob_n] }
+            {
+                arc_map[knob_n][current_led @ knob_n] = 0;
+                current_led[knob_n] = current_led[knob_n] + 1;
+                current_led[knob_n] = current_led[knob_n].wrap(0, 63);
+                arc_map[knob_n][current_led @ knob_n] = 15;
+                gathered_delta[knob_n] = gathered_delta[knob_n] - sensitivity[knob_n];
+            };
 
-			my_arc.ringmap(knob_n, my_arc_map);
-		};
+            arc.ringmap(knob_n, arc_map[knob_n]);
+        }
 
-		^delta.sign;
-	}
+        { // if it's negative
 
-	focus { | knob_n |
+            gathered_delta[knob_n] = gathered_delta[knob_n] + delta.abs;
 
-		my_arc.ringmap(knob_n, my_arc_map);
+            while { gathered_delta[knob_n] >= sensitivity[knob_n] }
+            {
+                arc_map[knob_n][current_led @ knob_n] = 0;
+                current_led[knob_n] = current_led[knob_n] - 1;
+                current_led[knob_n] = current_led[knob_n].wrap(0, 63);
+                arc_map[knob_n][current_led @ knob_n] = 15;
+                gathered_delta[knob_n] = gathered_delta[knob_n] - sensitivity[knob_n];
+            };
 
-	}
+            arc.ringmap(knob_n, arc_map[knob_n]);
+        };
+
+        ^delta.sign;
+    }
+
+    focusKnob { | knob_n |
+
+        arc.ringmap(knob_n, arc_map[knob_n]);
+
+    }
 
 }
