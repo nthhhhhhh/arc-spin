@@ -13,7 +13,32 @@ ArcKnobAbsolute : ArcKnobIncremental{
 
     *new { | your_arc, sensitivity_level |
 
-        ^super.new.initArcKnob(your_arc, sensitivity_level);
+        ^super.new.initArcKnobAbsolute(your_arc, sensitivity_level);
+    }
+
+    initArcKnobAbsolute { | your_arc, sensitivity_level |
+
+        /*
+        arc = arc;
+        sensitivity = sensitvity_level;
+        arc_map = Array.fill(64, 0);
+
+        gathered_delta = 0;
+        current_led = 0;
+        */
+
+        arc = your_arc;
+        sensitivity = Array.fill(4, sensitivity_level);
+        current_led = Array.fill(4, 0);
+        gathered_delta = Array.fill(4, 0);
+
+        arc_map = [
+            Array.fill(64,0),
+            Array.fill(64, 0),
+            Array.fill(64, 0),
+            Array.fill(64, 0)
+        ];
+
     }
 
     spin { | knob_n, delta |

@@ -41,13 +41,6 @@ ArcKnobIncremental{
 
         for(0, 3, { arg i; arc_map[i][0] = 15; });
 
-        /* Old code:
-        sensitivity = sensitivity_level;
-        arc_map = Array.fill(64, 0);
-        arc_map[0] = 15;
-
-        current_led = 0;
-        gathered_delta = 0;*/
 
     }
 
