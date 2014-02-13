@@ -8,53 +8,38 @@ https://github.com/nthhisst
 
 */
 
-ArcKnobAbsolute{
+ArcKnobAbsolute : ArcKnobIncremental{
 
-    var my_arc,
-    <>sensitvity,
-    my_gathered_delta,
-    my_lead_led_position,
-    my_arc_map;
 
-    *new { | arc, sensitvity_level |
+    *new { | your_arc, sensitivity_level |
 
-        ^super.new.initArcKnob(arc, sensitvity_level);
-    }
-
-    initArcKnob { | arc, sensitvity_level |
-
-        my_arc = arc;
-        sensitvity = sensitvity_level;
-        my_arc_map = Array.fill(64, 0);
-
-        my_gathered_delta = 0;
-        my_lead_led_position = 0;
+        ^super.new.initArcKnob(your_arc, sensitivity_level);
     }
 
     spin { | knob_n, delta |
 
         if(delta.isStrictlyPositive)
         {
-            if(my_lead_led_position < 63)
+            if(current_led[knob_n] < 63)
             {
-                my_gathered_delta = my_gathered_delta + delta;
+                gathered_delta[knob_n] = gathered_delta[knob_n] + delta;
 
-                while{(my_gathered_delta >= sensitvity) && (my_lead_led_position < 63)}
+                while{ (gathered_delta[knob_n] >= sensitivity[knob_n]) && (current_led[knob_n] < 63) }
                 {
-                    my_lead_led_position = my_lead_led_position + 1;
-                    my_arc_map[my_lead_led_position] = 15;
-                    my_gathered_delta = my_gathered_delta - sensitvity;
+                    current_led[knob_n] = current_led[knob_n] + 1;
+                    arc_map[knob_n][current_led @ knob_n] = 15;
+                    gathered_delta[knob_n] = gathered_delta[knob_n] - sensitivity[knob_n];
 
                 };
 
-                my_arc.ringmap(knob_n, my_arc_map);
+                arc.ringmap(knob_n, arc_map[knob_n]);
 
-                if(my_lead_led_position >= 63)
+                if(current_led[knob_n] >= 63)
                 {
-                    my_lead_led_position = 63;
+                    current_led[knob_n] = 63;
 
                     // constant array for efficiency
-                    my_arc.ringmap(knob_n, #[
+                    arc.ringmap(knob_n, #[
                         15, 15, 15, 15, 15, 15, 15, 15,
                         15, 15, 15, 15, 15, 15, 15, 15,
                         15, 15, 15, 15, 15, 15, 15, 15,
@@ -64,9 +49,9 @@ ArcKnobAbsolute{
                         15, 15, 15, 15, 15, 15, 15, 15,
                         15, 15, 15, 15, 15, 15, 15, 15 ]);
 
-                    my_gathered_delta = 0;
+                    gathered_delta[knob_n] = 0;
 
-                    ^ my_lead_led_position;
+                    ^ current_led[knob_n];
                 };
 
             };
@@ -74,47 +59,42 @@ ArcKnobAbsolute{
 
         if(delta.isNegative)
         {
-            if(my_lead_led_position == 0)
+            if(current_led[knob_n] == 0)
             {
-                my_gathered_delta = 0;
-                my_lead_led_position = 0;
+                gathered_delta[knob_n] = 0;
+                current_led[knob_n] = 0;
 
-                // using constant array for efficiency
-                my_arc.ringmap(knob_n, #[ 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                arc.ringmap(knob_n, #[
                     0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0 ]);
+                    0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0]);
 
-                ^ my_lead_led_position;
+                ^ current_led[knob_n];
             };
 
 
-            if(my_lead_led_position > 0)
+            if(current_led[knob_n] > 0)
             {
-                my_gathered_delta = my_gathered_delta + delta.abs;
+                gathered_delta[knob_n] = gathered_delta[knob_n] + delta.abs;
 
-                while{ (my_gathered_delta >= sensitvity) && (my_lead_led_position >= 0) }
+                while{ (gathered_delta[knob_n] >= sensitivity[knob_n]) && (current_led[knob_n] >= 0) }
                 {
-                    my_arc_map[my_lead_led_position] = 0;
-                    my_lead_led_position = my_lead_led_position - 1;
-                    my_gathered_delta = my_gathered_delta - sensitvity;
+                    arc_map[knob_n][current_led @ knob_n] = 0;
+                    current_led[knob_n] = current_led[knob_n] - 1;
+                    gathered_delta[knob_n] = gathered_delta[knob_n] - sensitivity[knob_n];
                 };
 
-                my_arc.ringmap(knob_n, my_arc_map);
+                arc.ringmap(knob_n, arc_map[knob_n]);
             };
 
         };
 
-        ^my_lead_led_position;
-    }
-
-    focus { arg knob_n;
-
-        my_arc.ringmap(knob_n, my_arc_map);
+        ^current_led;
     }
 
 }
