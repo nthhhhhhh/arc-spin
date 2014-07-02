@@ -13,30 +13,26 @@ s.waitForBoot({
     ~arc.useDevice(0);
 
     // first argument is your arc object, second sets sensitivity
-    ~arcKnobberInc = ArcRotary(~arc, 4);
-    ~arcKnobberAbs = ArcEncoder(~arc, 6);
+    ~arcKnobberRotary = ArcRotary(~arc, 8);
+    ~arcKnobberEncoder = ArcEncoder(~arc, 2);
 
     OSCFunc.newMatching({ | message |
 
         var knob_n = message[1];  // reports which knob is rotating
         var delta = message[2];   // delta coming from rotating knob
 
-        if(knob_n == 0){
+        if(knob_n == 0) {
             // will report position of led (0-63)
-            "encoder knob: % \n".postf(~arcKnobberAbs.spin(knob_n, delta));
+            "encoder knob#0: % \n".postf(~arcKnobberEncoder.spin(knob_n, delta));
         };
 
-        if(knob_n == 1){
-            // will report -1 if negative and 1 if positive
-            "rotary knob: % \n".postf(~arcKnobberInc.spin(knob_n, delta));
+        if(knob_n == 1) {
+            // will report delta from arc
+            "rotary knob#1: % \n".postf(~arcKnobberRotary.spin(knob_n, delta));
         };
-
     }, '/arc/enc/delta');
-
 });
-
 )
-
 
 // turn off your device here if you'd like
 ~arc.darkness;
