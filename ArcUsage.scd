@@ -1,5 +1,4 @@
 (
-
 Server.default = Server.local;
 
 s.waitForBoot({
@@ -8,13 +7,13 @@ s.waitForBoot({
     ~arc = Arc.new("/arc", 270);
 
     // choose your appropriate device
-    // if you have a grid device plugged in
-    // make sure the right device is chosen
+    // if you have another monome device plugged in
+    // make sure the correct device is chosen
     ~arc.useDevice(0);
 
     // first argument is your arc object, second sets sensitivity
-    ~arcKnobberRotary = ArcRotary(~arc, 8);
-    ~arcKnobberEncoder = ArcEncoder(~arc, 2);
+    ~arcKnobberEncoder = ArcEncoder(~arc, 8);
+    ~arcKnobberRotary = ArcRotary(~arc, 2);
 
     OSCFunc.newMatching({ | message |
 
@@ -30,7 +29,7 @@ s.waitForBoot({
             // will report delta from arc
             "rotary knob#1: % \n".postf(~arcKnobberRotary.spin(knob_n, delta));
         };
-    }, '/arc/enc/delta');
+    }, "/arc/enc/delta");
 });
 )
 
