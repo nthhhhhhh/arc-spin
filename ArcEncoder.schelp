@@ -1,0 +1,76 @@
+CLASS:: ArcEncoder
+summary:: Encoder for monome arc
+categories:: Monome
+related::Classes/Arc, Classes/ArcRotary, Classes/MonoM
+
+DESCRIPTION::
+Encoder like functionality for the monome arc.
+
+CLASSMETHODS::
+
+method:: new
+allocates a new arcEncoder
+argument::your_arc
+An Arc object.
+argument:: sensitivity_level
+The amount of delta that causes a change in led position.
+
+INSTANCEMETHODS::
+
+private::initArcKnob
+
+method::spin
+Sends led position to arc device
+argument::knob_n
+The nth arc encoder (range of 0-3 for arc 4 and 0-1 for arc 2).
+argument::delta
+Amount of change (or force) for any arc rotation.
+returns::delta
+
+method::focusKnob
+Calls an arc object onto focus on the nth knob. Useful for using multiple arc objects.
+argument::knob_n
+The nth arc encoder (range of 0-3 for arc 4 and 0-1 for arc 2).
+
+method::sensitivity
+
+subsection::Example Usage
+code::
+(
+Server.default = Server.local;
+
+s.waitForBoot({
+
+    // create your arc object
+    ~arc = Arc.new("/arc", 270);
+
+    // choose your appropriate device
+    // if you have another monome device plugged in
+    // make sure the correct device is chosen
+    ~arc.useDevice(0);
+
+    // first argument is your arc object, second sets sensitivity
+    ~arcKnobberEncoder = ArcRotary(~arc, 8);
+    ~arcKnobberEncoder = ArcEncoder(~arc, 2);
+
+    OSCFunc.newMatching({ | message |
+
+        var knob_n = message[1];  // reports which knob is rotating
+        var delta = message[2];   // delta coming from rotating knob
+
+        if(knob_n == 0) {
+            // will report position of led (0-63)
+            "encoder knob#0: % \n".postf(~arcKnobberEncoder.spin(knob_n, delta));
+        };
+
+        if(knob_n == 1) {
+            // will report delta from arc
+            "rotary knob#1: % \n".postf(~arcKnobberRotary.spin(knob_n, delta));
+        };
+    }, "/arc/enc/delta");
+});
+)
+
+// turn off your device here if you'd like
+~arc.darkness;
+::
