@@ -16,7 +16,7 @@ Leave the .scd out of the class directory. You can open it from a project folder
 One can find the help folder to drop the .schelp file in the directory:
 /Applications/SuperCollider/SuperCollider.app/Contents/Resources/HelpSource/Classes
 
-See ArcUsage.scd for further setup.
+See ArcUsage.scd or the documentation file for further setup.
 
 MonoM class written by Raja Das
 https://github.com/Karaokaze
